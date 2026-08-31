@@ -1,3 +1,11 @@
+"""
+Что нового:
+- Если результат равен нулю — он подсвечивается оранжевым, чтобы сразу было видно.
+- Если результат отрицательный — тоже подсвечивается, но красным.
+- Числа теперь выводятся без лишних .0, если они целые.
+- В решении показываются все шаги вычислений.
+"""
+
 import sys
 from math import gcd
 from PyQt6.QtWidgets import *
@@ -195,6 +203,12 @@ class PercentOperations(QWidget):
         self.result_line.setText("")
         self.solution_text.setText("")
 
+    def format_number(self, num):
+        """Убирает лишние .0, чтобы числа выглядели аккуратно"""
+        if num == int(num):
+            return str(int(num))
+        return f"{num:.4g}"
+
     def calc(self):
         try:
             op = self.operation_combo.currentIndex()
@@ -205,47 +219,107 @@ class PercentOperations(QWidget):
                 percent = val1
                 number = val2
                 result = (percent / 100) * number
+                formatted_result = self.format_number(result)
+
+                if result == 0:
+                    result_color = "orange"
+                    extra_text = " (ноль)"
+                elif result < 0:
+                    result_color = "red"
+                    extra_text = " (отрицательное число)"
+                else:
+                    result_color = "red"
+                    extra_text = ""
+
                 self.result_line.setText(
-                    f'<span style="font-size: 13px;">{percent}% от числа {number} = </span>'
-                    f'<span style="color: red; font-size: 20px; font-weight: bold;">{result}</span>'
+                    f'<span style="font-size: 13px;">{self.format_number(percent)}% от числа {self.format_number(number)} = </span>'
+                    f'<span style="color: {result_color}; font-size: 20px; font-weight: bold;">{formatted_result}</span>'
+                    f'<span style="font-size: 13px;">{extra_text}</span>'
                 )
                 self.solution_text.setText(
-                    f"Решение: {percent}% от {number} = ({percent} ÷ 100) × {number} = {percent / 100} × {number} = {result}"
+                    f"Решение: {self.format_number(percent)}% от {self.format_number(number)} = "
+                    f"({self.format_number(percent)} ÷ 100) × {self.format_number(number)} = "
+                    f"{self.format_number(percent / 100)} × {self.format_number(number)} = {formatted_result}"
                 )
+
             elif op == 1:
                 x = val1
                 y = val2
                 if y == 0:
                     raise ValueError("Число Y не может быть нулём")
                 result = (x / y) * 100
+                formatted_result = self.format_number(result)
+
+                if result == 0:
+                    result_color = "orange"
+                    extra_text = " (ноль)"
+                elif result < 0:
+                    result_color = "red"
+                    extra_text = " (отрицательное число)"
+                else:
+                    result_color = "red"
+                    extra_text = ""
+
                 self.result_line.setText(
-                    f'<span style="font-size: 13px;">Число {x} составляет от числа {y} </span>'
-                    f'<span style="color: red; font-size: 20px; font-weight: bold;">{result}%</span>'
+                    f'<span style="font-size: 13px;">Число {self.format_number(x)} составляет от числа {self.format_number(y)} </span>'
+                    f'<span style="color: {result_color}; font-size: 20px; font-weight: bold;">{formatted_result}%</span>'
+                    f'<span style="font-size: 13px;">{extra_text}</span>'
                 )
                 self.solution_text.setText(
-                    f"Решение: {x} ÷ {y} × 100% = {x / y} × 100% = {result}%"
+                    f"Решение: {self.format_number(x)} ÷ {self.format_number(y)} × 100% = "
+                    f"{self.format_number(x / y)} × 100% = {formatted_result}%"
                 )
+
             elif op == 2:
                 percent = val1
                 number = val2
                 result = number + (number * percent / 100)
+                formatted_result = self.format_number(result)
+
+                if result == 0:
+                    result_color = "orange"
+                    extra_text = " (ноль)"
+                elif result < 0:
+                    result_color = "red"
+                    extra_text = " (отрицательное число)"
+                else:
+                    result_color = "red"
+                    extra_text = ""
+
                 self.result_line.setText(
-                    f'<span style="font-size: 13px;">К числу {number} прибавить {percent}% = </span>'
-                    f'<span style="color: red; font-size: 20px; font-weight: bold;">{result}</span>'
+                    f'<span style="font-size: 13px;">К числу {self.format_number(number)} прибавить {self.format_number(percent)}% = </span>'
+                    f'<span style="color: {result_color}; font-size: 20px; font-weight: bold;">{formatted_result}</span>'
+                    f'<span style="font-size: 13px;">{extra_text}</span>'
                 )
                 self.solution_text.setText(
-                    f"Решение: {number} + ({number} · {percent} ÷ 100) = {number} + {number * percent / 100} = {result}"
+                    f"Решение: {self.format_number(number)} + ({self.format_number(number)} · {self.format_number(percent)} ÷ 100) = "
+                    f"{self.format_number(number)} + {self.format_number(number * percent / 100)} = {formatted_result}"
                 )
+
             else:
                 number = val1
                 percent = val2
                 result = number - (number * percent / 100)
+                formatted_result = self.format_number(result)
+
+                if result == 0:
+                    result_color = "orange"
+                    extra_text = " (ноль)"
+                elif result < 0:
+                    result_color = "red"
+                    extra_text = " (отрицательное число)"
+                else:
+                    result_color = "red"
+                    extra_text = ""
+
                 self.result_line.setText(
-                    f'<span style="font-size: 13px;">Из числа {number} вычесть {percent}% = </span>'
-                    f'<span style="color: red; font-size: 20px; font-weight: bold;">{result}</span>'
+                    f'<span style="font-size: 13px;">Из числа {self.format_number(number)} вычесть {self.format_number(percent)}% = </span>'
+                    f'<span style="color: {result_color}; font-size: 20px; font-weight: bold;">{formatted_result}</span>'
+                    f'<span style="font-size: 13px;">{extra_text}</span>'
                 )
                 self.solution_text.setText(
-                    f"Решение: {number} - ({number} · {percent} ÷ 100) = {number} - {number * percent / 100} = {result}"
+                    f"Решение: {self.format_number(number)} - ({self.format_number(number)} · {self.format_number(percent)} ÷ 100) = "
+                    f"{self.format_number(number)} - {self.format_number(number * percent / 100)} = {formatted_result}"
                 )
 
             self.result_line.setTextFormat(Qt.TextFormat.RichText)
